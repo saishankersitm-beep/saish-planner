@@ -1,0 +1,1199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Study Planner 🌸</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Pacifico&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --lavender: #e8e4f8;
+    --lavender-dark: #c4b8f0;
+    --lavender-text: #6c5fa8;
+    --pink: #fce4ec;
+    --pink-dark: #f8bbd0;
+    --pink-text: #c2185b;
+    --mint: #e0f5ee;
+    --mint-dark: #b2dfdb;
+    --mint-text: #00796b;
+    --peach: #fff3e0;
+    --peach-dark: #ffcc80;
+    --peach-text: #e65100;
+    --sky: #e3f2fd;
+    --sky-dark: #bbdefb;
+    --sky-text: #1565c0;
+    --rose: #fce4ec;
+    --bg: #fdf6fb;
+    --card: #ffffff;
+    --text: #3d2b5e;
+    --text-muted: #9c8cb0;
+    --border: #ede7f6;
+    --shadow: 0 2px 12px rgba(150,100,200,0.08);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+  .header {
+    background: linear-gradient(135deg, #e8e4f8 0%, #fce4ec 50%, #e0f5ee 100%);
+    padding: 24px 32px 20px;
+    border-bottom: 2px solid var(--lavender-dark);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .header-left h1 {
+    font-family: 'Pacifico', cursive;
+    font-size: 32px;
+    color: var(--lavender-text);
+    line-height: 1;
+  }
+  .header-left p {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: 4px;
+    font-style: italic;
+  }
+  .header-stats {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .stat-pill {
+    background: white;
+    border: 1.5px solid var(--lavender-dark);
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--lavender-text);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .tabs {
+    display: flex;
+    background: white;
+    border-bottom: 2px solid var(--border);
+    padding: 0 24px;
+    gap: 4px;
+    overflow-x: auto;
+  }
+  .tab-btn {
+    padding: 14px 20px;
+    border: none;
+    background: none;
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-muted);
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .tab-btn.active {
+    color: var(--lavender-text);
+    border-bottom-color: var(--lavender-text);
+  }
+  .tab-btn:hover { color: var(--lavender-text); }
+  .content { padding: 24px; max-width: 1000px; margin: 0 auto; }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* Cards */
+  .card {
+    background: var(--card);
+    border-radius: 18px;
+    padding: 20px 24px;
+    border: 1.5px solid var(--border);
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+  }
+  .card-title {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--lavender-text);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* Date strip */
+  .date-strip {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+  .date-pill {
+    background: white;
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    padding: 8px 16px;
+    text-align: center;
+    cursor: pointer;
+    min-width: 72px;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  .date-pill.active {
+    background: var(--lavender);
+    border-color: var(--lavender-dark);
+  }
+  .date-pill .day-name { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
+  .date-pill .day-num { font-size: 22px; font-weight: 800; color: var(--lavender-text); }
+  .date-pill.active .day-name, .date-pill.active .day-num { color: var(--lavender-text); }
+  .date-pill.today .day-num { color: var(--pink-text); }
+
+  /* Add task area */
+  .add-task-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+  .add-task-row .add-task-input { flex: 1; min-width: 0; }
+  .add-task-input {
+    flex: 1;
+    padding: 10px 16px;
+    border: 1.5px solid var(--lavender-dark);
+    border-radius: 12px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px;
+    color: var(--text);
+    background: var(--lavender);
+    outline: none;
+  }
+  .add-task-input:focus { border-color: var(--lavender-text); background: white; }
+  .add-task-input::placeholder { color: var(--text-muted); }
+
+  .tag-select {
+    padding: 10px 12px;
+    border: 1.5px solid var(--lavender-dark);
+    border-radius: 12px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 13px;
+    color: var(--lavender-text);
+    background: var(--lavender);
+    outline: none;
+    cursor: pointer;
+  }
+  .btn-add {
+    padding: 10px 20px;
+    background: var(--lavender-text);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .btn-add:hover { background: #5849a0; transform: scale(1.02); }
+
+  /* Task items */
+  .task-list { display: flex; flex-direction: column; gap: 8px; }
+  .task-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: 14px;
+    border: 1.5px solid var(--border);
+    background: white;
+    transition: all 0.2s;
+    group: true;
+  }
+  .task-item:hover { border-color: var(--lavender-dark); box-shadow: 0 2px 8px rgba(150,100,200,0.1); }
+  .task-item.done { opacity: 0.6; }
+  .task-cb {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 2px solid var(--lavender-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: all 0.2s;
+    background: white;
+    font-size: 13px;
+  }
+  .task-cb.checked { background: var(--mint-dark); border-color: var(--mint-text); }
+  .task-text {
+    flex: 1;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .task-item.done .task-text { text-decoration: line-through; color: var(--text-muted); }
+  .task-tag {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 10px;
+  }
+  .tag-study { background: var(--lavender); color: var(--lavender-text); }
+  .tag-work { background: var(--sky); color: var(--sky-text); }
+  .tag-health { background: var(--mint); color: var(--mint-text); }
+  .tag-personal { background: var(--pink); color: var(--pink-text); }
+  .tag-revision { background: var(--peach); color: var(--peach-text); }
+  .task-delete {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-muted);
+    font-size: 16px;
+    padding: 2px 6px;
+    border-radius: 6px;
+    transition: all 0.15s;
+    opacity: 0;
+  }
+  .task-item:hover .task-delete { opacity: 1; }
+  .task-delete:hover { background: var(--pink); color: var(--pink-text); }
+  .empty-state {
+    text-align: center;
+    padding: 32px;
+    color: var(--text-muted);
+    font-size: 14px;
+  }
+  .empty-state .emoji { font-size: 40px; margin-bottom: 8px; }
+
+  /* Progress bar */
+  .progress-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .progress-bar-bg {
+    flex: 1;
+    height: 10px;
+    background: var(--lavender);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--lavender-text), #a58fd8);
+    border-radius: 10px;
+    transition: width 0.4s ease;
+  }
+  .progress-label { font-size: 12px; font-weight: 700; color: var(--lavender-text); min-width: 36px; text-align: right; }
+
+  /* Checklist */
+  .checklist-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  @media(max-width:520px){ .checklist-grid { grid-template-columns: 1fr; } }
+  .check-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 12px;
+    border: 1.5px solid var(--border);
+    cursor: pointer;
+    transition: all 0.2s;
+    background: white;
+  }
+  .check-item:hover { border-color: var(--mint-dark); }
+  .check-item.done-item { background: var(--mint); border-color: var(--mint-dark); }
+  .check-icon {
+    width: 20px;
+    height: 20px;
+    border-radius: 6px;
+    border: 2px solid var(--mint-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    flex-shrink: 0;
+    background: white;
+    transition: all 0.2s;
+  }
+  .check-item.done-item .check-icon { background: var(--mint-text); border-color: var(--mint-text); color: white; }
+  .check-label { font-size: 13px; font-weight: 600; color: var(--text); }
+  .check-item.done-item .check-label { text-decoration: line-through; color: var(--mint-text); }
+
+  /* Weekly grid */
+  .week-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 10px;
+  }
+  @media(max-width:700px){ .week-grid { grid-template-columns: repeat(4, 1fr); } }
+  @media(max-width:420px){ .week-grid { grid-template-columns: repeat(2, 1fr); } }
+  .week-col {
+    border-radius: 16px;
+    border: 1.5px solid var(--border);
+    overflow: hidden;
+    background: white;
+    min-height: 160px;
+  }
+  .week-col-header {
+    padding: 10px 8px 8px;
+    text-align: center;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .week-col-header .wday-num { font-size: 22px; font-weight: 800; display: block; margin-top: 2px; }
+  .week-col.today-col { border-color: var(--lavender-dark); }
+  .week-col.today-col .week-col-header { background: var(--lavender); color: var(--lavender-text); }
+  .week-tasks { padding: 8px; display: flex; flex-direction: column; gap: 4px; }
+  .week-task-chip {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 8px;
+    border-radius: 8px;
+    background: var(--lavender);
+    color: var(--lavender-text);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  .week-task-chip.done-chip { background: var(--mint); color: var(--mint-text); opacity: 0.7; text-decoration: line-through; }
+  .week-add-btn {
+    display: block;
+    width: 100%;
+    background: none;
+    border: 1.5px dashed var(--border);
+    border-radius: 8px;
+    padding: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: all 0.2s;
+    margin-top: 4px;
+  }
+  .week-add-btn:hover { border-color: var(--lavender-text); color: var(--lavender-text); background: var(--lavender); }
+
+  /* Habit tracker */
+  .habit-table-wrap { overflow-x: auto; }
+  .habit-table { width: 100%; border-collapse: collapse; min-width: 520px; }
+  .habit-table th {
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    padding: 8px 12px;
+    text-align: center;
+    color: var(--text-muted);
+    border-bottom: 1.5px solid var(--border);
+  }
+  .habit-table th:first-child { text-align: left; min-width: 160px; }
+  .habit-table td { padding: 8px 10px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  .habit-name-cell {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .habit-circle {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 2px solid var(--lavender-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 14px;
+    margin: 0 auto;
+    background: white;
+    transition: all 0.2s;
+    color: transparent;
+  }
+  .habit-circle.done { background: var(--mint-dark); border-color: var(--mint-text); color: var(--mint-text); }
+  .habit-streak {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--peach-text);
+    background: var(--peach);
+    padding: 2px 8px;
+    border-radius: 8px;
+    margin-left: auto;
+  }
+  .habit-add-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 14px;
+  }
+
+  /* Color accent headers */
+  .accent-pink .card-title { color: var(--pink-text); }
+  .accent-mint .card-title { color: var(--mint-text); }
+  .accent-peach .card-title { color: var(--peach-text); }
+  .accent-sky .card-title { color: var(--sky-text); }
+
+  /* Quote bar */
+  .quote-bar {
+    background: linear-gradient(135deg, var(--lavender), var(--pink));
+    border-radius: 14px;
+    padding: 14px 20px;
+    margin-bottom: 20px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--lavender-text);
+    text-align: center;
+    font-style: italic;
+    border: 1.5px solid var(--lavender-dark);
+  }
+
+  /* Modal */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(108,95,168,0.18);
+    backdrop-filter: blur(2px);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: white;
+    border-radius: 22px;
+    padding: 28px 28px 24px;
+    width: 92%;
+    max-width: 440px;
+    border: 2px solid var(--lavender-dark);
+    box-shadow: 0 12px 40px rgba(108,95,168,0.18);
+  }
+  .modal h3 { font-size: 18px; font-weight: 800; color: var(--lavender-text); margin-bottom: 16px; }
+  .modal label { font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 5px; }
+  .modal input, .modal select, .modal textarea {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid var(--lavender-dark);
+    border-radius: 12px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px;
+    color: var(--text);
+    background: var(--lavender);
+    outline: none;
+    margin-bottom: 14px;
+  }
+  .modal input:focus, .modal select:focus, .modal textarea:focus { border-color: var(--lavender-text); background: white; }
+  .modal-btns { display: flex; gap: 10px; justify-content: flex-end; }
+  .btn-cancel {
+    padding: 9px 18px;
+    background: white;
+    border: 1.5px solid var(--lavender-dark);
+    border-radius: 10px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--lavender-text);
+    cursor: pointer;
+  }
+  .btn-save {
+    padding: 9px 22px;
+    background: var(--lavender-text);
+    border: none;
+    border-radius: 10px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: white;
+    cursor: pointer;
+  }
+  .btn-save:hover { background: #5849a0; }
+
+  /* Grid layout for today */
+  .today-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 18px; }
+  @media(max-width:640px){ .today-grid { grid-template-columns: 1fr; } }
+
+  /* Weekly summary chips */
+  .summary-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+  .summary-chip {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  /* Scroll */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--lavender-dark); border-radius: 10px; }
+
+  /* ===== MOBILE RESPONSIVE ===== */
+  @media (max-width: 600px) {
+    .header { padding: 16px 16px 14px; gap: 10px; }
+    .header-left h1 { font-size: 24px; }
+    .header-stats { gap: 6px; }
+    .stat-pill { font-size: 11px; padding: 5px 10px; }
+    .tabs { padding: 0 8px; }
+    .tab-btn { padding: 12px 12px; font-size: 12px; }
+    .content { padding: 12px; }
+    .card { padding: 14px 14px; border-radius: 14px; }
+    .card-title { font-size: 14px; }
+    .today-grid { grid-template-columns: 1fr !important; }
+    .add-task-row { flex-wrap: wrap; }
+    .add-task-row .add-task-input { width: 100%; flex: none; order: 1; }
+    .add-task-row .tag-select { flex: 1; order: 2; }
+    .add-task-row .btn-add { order: 3; }
+    .checklist-grid { grid-template-columns: 1fr !important; }
+    .week-grid { grid-template-columns: repeat(4, 1fr) !important; }
+    .modal { padding: 20px 16px; }
+    .quote-bar { font-size: 12px; padding: 10px 14px; }
+    .habit-table { min-width: 480px; }
+  }
+  @media (max-width: 380px) {
+    .header-stats { display: none; }
+    .week-grid { grid-template-columns: repeat(2, 1fr) !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <h1>My Planner 🌸</h1>
+    <p id="headerDate">Loading...</p>
+  </div>
+  <div class="header-stats">
+    <div class="stat-pill" id="todayCount">📋 0 Tasks Today</div>
+    <div class="stat-pill" id="doneCount">✅ 0 Done</div>
+    <div class="stat-pill" id="streakCount">🔥 0 Day Streak</div>
+  </div>
+</div>
+
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab('today', this)">📅 Today</button>
+  <button class="tab-btn" onclick="switchTab('weekly', this)">📆 Weekly</button>
+  <button class="tab-btn" onclick="switchTab('checklist', this)">✅ Checklist</button>
+  <button class="tab-btn" onclick="switchTab('habits', this)">🌱 Habits</button>
+</div>
+
+<div class="content">
+
+  <!-- TODAY TAB -->
+  <div class="tab-panel active" id="tab-today">
+    <div class="quote-bar" id="quoteBar">✨ "Small progress every day, leads to big results." ✨</div>
+
+    <div class="today-grid">
+      <div>
+        <div class="card">
+          <div class="card-title">📝 Tasks for Today</div>
+          <div class="add-task-row">
+            <input class="add-task-input" id="quickInput" placeholder="Add a task..." onkeydown="if(event.key==='Enter') quickAddTask()">
+            <select class="tag-select" id="quickTag">
+              <option value="study">📚 Study</option>
+              <option value="work">💼 Work</option>
+              <option value="revision">📖 Revision</option>
+              <option value="health">💪 Health</option>
+              <option value="personal">🌸 Personal</option>
+            </select>
+            <button class="btn-add" onclick="quickAddTask()">+ Add</button>
+          </div>
+          <div class="progress-row">
+            <div class="progress-bar-bg"><div class="progress-bar-fill" id="todayProgress" style="width:0%"></div></div>
+            <div class="progress-label" id="progressLabel">0%</div>
+          </div>
+          <div class="task-list" id="todayTaskList"></div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card accent-mint">
+          <div class="card-title">⏰ Time Slots</div>
+          <div class="task-list" id="timeSlotList"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WEEKLY TAB -->
+  <div class="tab-panel" id="tab-weekly">
+    <div class="card">
+      <div class="card-title">📆 This Week Overview</div>
+      <div class="summary-chips" id="weeklySummaryChips"></div>
+      <div class="week-grid" id="weekGrid"></div>
+    </div>
+  </div>
+
+  <!-- CHECKLIST TAB -->
+  <div class="tab-panel" id="tab-checklist">
+    <div class="card">
+      <div class="card-title">☀️ Daily Routine Checklist</div>
+      <div class="checklist-grid" id="dailyChecklist"></div>
+    </div>
+    <div class="card accent-peach">
+      <div class="card-title">📅 Weekly Goals Checklist</div>
+      <div class="add-task-row" style="margin-bottom:14px">
+        <input class="add-task-input" id="weeklyGoalInput" placeholder="Add a weekly goal..." style="background:#fff3e0;border-color:var(--peach-dark)" onkeydown="if(event.key==='Enter') addWeeklyGoal()">
+        <button class="btn-add" onclick="addWeeklyGoal()" style="background:var(--peach-text)">+ Add</button>
+      </div>
+      <div class="task-list" id="weeklyGoalList"></div>
+    </div>
+  </div>
+
+  <!-- HABITS TAB -->
+  <div class="tab-panel" id="tab-habits">
+    <div class="card">
+      <div class="card-title">🌱 Weekly Habit Tracker</div>
+      <div class="habit-add-row" style="margin-bottom:16px;margin-top:-4px">
+        <input class="add-task-input" id="habitInput" placeholder="Add a new habit... (e.g. 🧘 Meditate)" onkeydown="if(event.key==='Enter') addHabit()">
+        <button class="btn-add" onclick="addHabit()">+ Add Habit</button>
+      </div>
+      <div class="habit-table-wrap">
+        <table class="habit-table">
+          <thead>
+            <tr>
+              <th>Habit</th>
+              <th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th><th>Sun</th>
+              <th>Streak</th>
+            </tr>
+          </thead>
+          <tbody id="habitTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Edit Time Slot Modal -->
+<div class="modal-overlay" id="slotModalOverlay">
+  <div class="modal">
+    <h3>✏️ Edit Time Slot</h3>
+    <input type="hidden" id="slotModalId">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+      <div id="slotModalEmoji" style="font-size:36px;cursor:pointer;background:var(--lavender);border-radius:12px;padding:8px 14px;border:1.5px solid var(--lavender-dark)">☀️</div>
+      <div style="flex:1">
+        <label>Session Name</label>
+        <input id="slotModalLabel" placeholder="e.g. Deep Work Block" />
+      </div>
+    </div>
+    <label>Time Range</label>
+    <input id="slotModalTime" placeholder="e.g. 9:00 - 11:00 AM" />
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeSlotModal()">Cancel</button>
+      <button class="btn-save" onclick="saveSlotModal()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Emoji Picker -->
+<div class="modal-overlay" id="emojiPickerOverlay" onclick="if(event.target===this)closeEmojiPicker()">
+  <div class="modal" style="max-width:320px;text-align:center">
+    <div id="emojiPicker"></div>
+    <button class="btn-cancel" onclick="closeEmojiPicker()" style="margin-top:10px;width:100%">Cancel</button>
+  </div>
+</div>
+
+<!-- Add Task Modal for Weekly -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <h3>✏️ Add Task</h3>
+    <label>Task Name</label>
+    <input id="modalTaskName" placeholder="What do you need to do?" />
+    <label>Category</label>
+    <select id="modalCategory">
+      <option value="study">📚 Study</option>
+      <option value="work">💼 Work</option>
+      <option value="revision">📖 Revision</option>
+      <option value="health">💪 Health</option>
+      <option value="personal">🌸 Personal</option>
+    </select>
+    <label>Time (optional)</label>
+    <input id="modalTime" type="time" />
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-save" onclick="saveModalTask()">Save Task</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const SHORT_DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const QUOTES = [
+  '✨ "Small progress every day, leads to big results." ✨',
+  '🌸 "Discipline today, success tomorrow." 🌸',
+  '🌟 "Believe in yourself and all that you are." 🌟',
+  '💪 "You got this! One step at a time." 💪',
+  '🎯 "Focus. Hustle. Be consistent." 🎯',
+  '🌈 "Every expert was once a beginner." 🌈',
+  '🔥 "Push yourself — no one else will do it for you." 🔥',
+];
+const TAG_COLORS = {
+  study: 'tag-study', work: 'tag-work', revision: 'tag-revision', health: 'tag-health', personal: 'tag-personal'
+};
+const TAG_EMOJI = { study:'📚', work:'💼', revision:'📖', health:'💪', personal:'🌸' };
+
+const DEFAULT_TIME_SLOTS = [
+  { id:'ts1', time:'7:00 - 9:00 AM', label:'Morning Study Session', emoji:'☀️' },
+  { id:'ts2', time:'9:00 - 11:00 AM', label:'Deep Work Block', emoji:'📚' },
+  { id:'ts3', time:'11:00 AM - 1:00 PM', label:'Mid-day Focus', emoji:'⚡' },
+  { id:'ts4', time:'2:00 - 4:00 PM', label:'Afternoon Session', emoji:'🌿' },
+  { id:'ts5', time:'4:15 - 6:00 PM', label:'Project / Practice', emoji:'💼' },
+  { id:'ts6', time:'6:45 - 8:45 PM', label:'Evening Revision', emoji:'🌙' },
+  { id:'ts7', time:'8:45 - 9:30 PM', label:'MCQ Practice', emoji:'📝' },
+];
+
+const DEFAULT_CHECKLIST = [
+  { id:'c1', text:'🌅 Wake up & freshen up', done: false },
+  { id:'c2', text:'🧘 Meditation / breathing', done: false },
+  { id:'c3', text:'📋 Plan the day', done: false },
+  { id:'c4', text:'📚 Morning study session', done: false },
+  { id:'c5', text:'☕ Short break', done: false },
+  { id:'c6', text:'🍽️ Lunch break', done: false },
+  { id:'c7', text:'💼 Afternoon session', done: false },
+  { id:'c8', text:'💪 30 mins exercise / walk', done: false },
+  { id:'c9', text:'📖 Read 10+ pages', done: false },
+  { id:'c10', text:'📝 Evening revision / MCQs', done: false },
+  { id:'c11', text:'🚫 No social media (during study)', done: false },
+  { id:'c12', text:'🌙 Sleep by 10:00 PM', done: false },
+];
+
+const DEFAULT_HABITS = [
+  { id:'h1', name:'📚 8+ Hours Study', days: {} },
+  { id:'h2', name:'💪 Exercise / Walk', days: {} },
+  { id:'h3', name:'🧘 Meditation', days: {} },
+  { id:'h4', name:'📖 Read (10+ pages)', days: {} },
+  { id:'h5', name:'🚫 No Social Media', days: {} },
+  { id:'h6', name:'🌙 Early to Bed', days: {} },
+];
+
+function todayKey() {
+  const d = new Date();
+  return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+}
+
+function weekKey() {
+  const d = new Date();
+  const day = d.getDay();
+  const monday = new Date(d);
+  monday.setDate(d.getDate() - (day === 0 ? 6 : day - 1));
+  return `w${monday.getFullYear()}-${monday.getMonth()}-${monday.getDate()}`;
+}
+
+function load(key, def) {
+  try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : def; } catch(e) { return def; }
+}
+function save(key, val) {
+  try { localStorage.setItem(key, JSON.stringify(val)); } catch(e) {}
+}
+
+let state = {
+  tasks: load('tasks', {}),
+  timeSlots: load('timeSlots', JSON.parse(JSON.stringify(DEFAULT_TIME_SLOTS))),
+  checklist: load('checklist_' + todayKey(), JSON.parse(JSON.stringify(DEFAULT_CHECKLIST))),
+  weeklyGoals: load('wgoals_' + weekKey(), []),
+  habits: load('habits', JSON.parse(JSON.stringify(DEFAULT_HABITS))),
+  habitDone: load('habitdone_' + weekKey(), {}),
+  currentDay: new Date().getDay(),
+  modalDay: null,
+};
+
+function getWeekDays() {
+  const today = new Date();
+  const day = today.getDay();
+  const monday = new Date(today);
+  monday.setDate(today.getDate() - (day === 0 ? 6 : day - 1));
+  const days = [];
+  for(let i=0;i<7;i++){
+    const d = new Date(monday);
+    d.setDate(monday.getDate() + i);
+    days.push(d);
+  }
+  return days;
+}
+
+function dayTaskKey(date) {
+  return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+}
+
+function getTasksForDay(date) {
+  const key = dayTaskKey(date);
+  return state.tasks[key] || [];
+}
+
+function saveTasksForDay(date, tasks) {
+  const key = dayTaskKey(date);
+  state.tasks[key] = tasks;
+  save('tasks', state.tasks);
+}
+
+function quickAddTask() {
+  const input = document.getElementById('quickInput');
+  const tag = document.getElementById('quickTag').value;
+  const text = input.value.trim();
+  if(!text) return;
+  const today = new Date();
+  const tasks = getTasksForDay(today);
+  tasks.push({ id: Date.now(), text, tag, done: false });
+  saveTasksForDay(today, tasks);
+  input.value = '';
+  renderTodayTasks();
+  renderWeekGrid();
+  updateHeaderStats();
+}
+
+function renderTodayTasks() {
+  const today = new Date();
+  const tasks = getTasksForDay(today);
+  const list = document.getElementById('todayTaskList');
+  const done = tasks.filter(t=>t.done).length;
+  const pct = tasks.length ? Math.round((done/tasks.length)*100) : 0;
+  document.getElementById('todayProgress').style.width = pct+'%';
+  document.getElementById('progressLabel').textContent = pct+'%';
+
+  if(!tasks.length) {
+    list.innerHTML = '<div class="empty-state"><div class="emoji">📝</div>No tasks yet! Add something to get started 🌸</div>';
+    return;
+  }
+  list.innerHTML = tasks.map(t => `
+    <div class="task-item ${t.done?'done':''}" id="task-${t.id}">
+      <div class="task-cb ${t.done?'checked':''}" onclick="toggleTask('today',${t.id})">${t.done?'✓':''}</div>
+      <span class="task-text">${escHtml(t.text)}</span>
+      <span class="task-tag ${TAG_COLORS[t.tag]||'tag-study'}">${TAG_EMOJI[t.tag]||'📚'} ${t.tag}</span>
+      <button class="task-delete" onclick="deleteTask('today',${t.id})">✕</button>
+    </div>
+  `).join('');
+}
+
+function toggleTask(scope, id) {
+  if(scope === 'today') {
+    const today = new Date();
+    const tasks = getTasksForDay(today);
+    const t = tasks.find(t=>t.id===id);
+    if(t) { t.done = !t.done; saveTasksForDay(today, tasks); renderTodayTasks(); renderWeekGrid(); updateHeaderStats(); }
+  } else if(scope === 'wgoal') {
+    const g = state.weeklyGoals.find(g=>g.id===id);
+    if(g) { g.done = !g.done; save('wgoals_'+weekKey(), state.weeklyGoals); renderWeeklyGoals(); }
+  }
+}
+
+function deleteTask(scope, id) {
+  if(scope === 'today') {
+    const today = new Date();
+    const tasks = getTasksForDay(today).filter(t=>t.id!==id);
+    saveTasksForDay(today, tasks);
+    renderTodayTasks(); renderWeekGrid(); updateHeaderStats();
+  } else if(scope === 'wgoal') {
+    state.weeklyGoals = state.weeklyGoals.filter(g=>g.id!==id);
+    save('wgoals_'+weekKey(), state.weeklyGoals);
+    renderWeeklyGoals();
+  }
+}
+
+function renderTimeSlots() {
+  const list = document.getElementById('timeSlotList');
+  const rows = state.timeSlots.map(s => `
+    <div class="task-item ts-row" id="ts-${s.id}" style="padding:8px 10px;align-items:flex-start;flex-wrap:wrap;gap:6px">
+      <div class="ts-display" style="display:flex;align-items:center;gap:8px;flex:1;min-width:0">
+        <span class="ts-emoji" style="font-size:18px;cursor:pointer;flex-shrink:0" onclick="pickEmoji('${s.id}')" title="Change emoji">${s.emoji}</span>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:11px;font-weight:700;color:var(--text-muted);margin-bottom:2px">${escHtml(s.time)}</div>
+          <div style="font-size:13px;font-weight:700;color:var(--text)">${escHtml(s.label)}</div>
+        </div>
+        <button onclick="editSlot('${s.id}')" title="Edit" style="background:none;border:none;cursor:pointer;font-size:14px;color:var(--text-muted);padding:2px 6px;border-radius:6px;transition:all 0.15s" onmouseover="this.style.background='var(--lavender)'" onmouseout="this.style.background='none'">✏️</button>
+        <button onclick="deleteSlot('${s.id}')" title="Remove" style="background:none;border:none;cursor:pointer;font-size:13px;color:var(--text-muted);padding:2px 6px;border-radius:6px;opacity:0.5;transition:all 0.15s" onmouseover="this.style.opacity='1';this.style.background='var(--pink)'" onmouseout="this.style.opacity='0.5';this.style.background='none'">✕</button>
+      </div>
+    </div>
+  `).join('');
+
+  list.innerHTML = rows + `
+    <button onclick="addSlot()" style="width:100%;margin-top:6px;padding:9px;background:none;border:1.5px dashed var(--mint-dark);border-radius:12px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;color:var(--mint-text);cursor:pointer;transition:all 0.2s" onmouseover="this.style.background='var(--mint)'" onmouseout="this.style.background='none'">+ Add Time Slot</button>
+  `;
+}
+
+const EMOJI_OPTIONS = ['☀️','📚','⚡','🌿','💼','🌙','📝','🎯','💡','🔥','⏰','🎓','🏋️','🧘','🍵','📖','✍️','💻','🎵','🌸'];
+
+function pickEmoji(id) {
+  const slot = state.timeSlots.find(s=>s.id===id);
+  if(!slot) return;
+  const picker = document.getElementById('emojiPicker');
+  picker.innerHTML = `<div style="font-size:13px;font-weight:800;color:var(--lavender-text);margin-bottom:10px">Pick an emoji</div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center">
+      ${EMOJI_OPTIONS.map(e=>`<button onclick="setSlotEmoji('${id}','${e}')" style="font-size:20px;background:var(--lavender);border:none;border-radius:8px;padding:5px 7px;cursor:pointer">${e}</button>`).join('')}
+    </div>`;
+  document.getElementById('emojiPickerOverlay').classList.add('open');
+  document.getElementById('emojiPickerOverlay')._targetId = id;
+}
+function setSlotEmoji(id, emoji) {
+  const slot = state.timeSlots.find(s=>s.id===id);
+  if(slot) { slot.emoji = emoji; save('timeSlots', state.timeSlots); }
+  document.getElementById('emojiPickerOverlay').classList.remove('open');
+  renderTimeSlots();
+}
+function closeEmojiPicker() { document.getElementById('emojiPickerOverlay').classList.remove('open'); }
+
+function editSlot(id) {
+  const slot = state.timeSlots.find(s=>s.id===id);
+  if(!slot) return;
+  document.getElementById('slotModalId').value = id;
+  document.getElementById('slotModalEmoji').textContent = slot.emoji;
+  document.getElementById('slotModalTime').value = slot.time;
+  document.getElementById('slotModalLabel').value = slot.label;
+  document.getElementById('slotModalOverlay').classList.add('open');
+  setTimeout(()=>document.getElementById('slotModalTime').focus(), 100);
+}
+function closeSlotModal() { document.getElementById('slotModalOverlay').classList.remove('open'); }
+function saveSlotModal() {
+  const id = document.getElementById('slotModalId').value;
+  const time = document.getElementById('slotModalTime').value.trim();
+  const label = document.getElementById('slotModalLabel').value.trim();
+  if(!time || !label) return;
+  const slot = state.timeSlots.find(s=>s.id===id);
+  if(slot) { slot.time = time; slot.label = label; save('timeSlots', state.timeSlots); }
+  closeSlotModal();
+  renderTimeSlots();
+}
+function addSlot() {
+  const id = 'ts' + Date.now();
+  state.timeSlots.push({ id, time: 'Start - End', label: 'New Session', emoji: '⏰' });
+  save('timeSlots', state.timeSlots);
+  renderTimeSlots();
+  setTimeout(() => editSlot(id), 80);
+}
+function deleteSlot(id) {
+  state.timeSlots = state.timeSlots.filter(s=>s.id!==id);
+  save('timeSlots', state.timeSlots);
+  renderTimeSlots();
+}
+
+function renderWeekGrid() {
+  const days = getWeekDays();
+  const today = new Date();
+  const grid = document.getElementById('weekGrid');
+  const chips = document.getElementById('weeklySummaryChips');
+
+  let totalTasks=0, doneTasks=0;
+  const tagCounts = {};
+
+  grid.innerHTML = days.map((d,i) => {
+    const isToday = d.toDateString() === today.toDateString();
+    const tasks = getTasksForDay(d);
+    totalTasks += tasks.length;
+    tasks.filter(t=>t.done).forEach(()=>doneTasks++);
+    tasks.forEach(t=>{ tagCounts[t.tag] = (tagCounts[t.tag]||0)+1; });
+    const dayKey = dayTaskKey(d);
+
+    return `<div class="week-col ${isToday?'today-col':''}">
+      <div class="week-col-header">
+        <span>${SHORT_DAYS[d.getDay()]}</span>
+        <span class="wday-num">${d.getDate()}</span>
+      </div>
+      <div class="week-tasks">
+        ${tasks.map(t=>`<div class="week-task-chip ${t.done?'done-chip':''}" title="${escHtml(t.text)}" onclick="toggleWeekTask('${dayKey}',${t.id})">${TAG_EMOJI[t.tag]||'📚'} ${escHtml(t.text.length>12?t.text.slice(0,12)+'…':t.text)}</div>`).join('')}
+        <button class="week-add-btn" onclick="openWeekModal('${dayKey}')">+</button>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Summary chips
+  const chipColors = [
+    {bg:'var(--lavender)',color:'var(--lavender-text)'},{bg:'var(--mint)',color:'var(--mint-text)'},
+    {bg:'var(--peach)',color:'var(--peach-text)'},{bg:'var(--pink)',color:'var(--pink-text)'},
+    {bg:'var(--sky)',color:'var(--sky-text)'}
+  ];
+  let ci=0;
+  let chipsHtml = `<div class="summary-chip" style="background:var(--mint);color:var(--mint-text)">✅ ${doneTasks}/${totalTasks} Tasks Done</div>`;
+  for(const [tag,cnt] of Object.entries(tagCounts)) {
+    const c = chipColors[ci++%chipColors.length];
+    chipsHtml += `<div class="summary-chip" style="background:${c.bg};color:${c.color}">${TAG_EMOJI[tag]||'📚'} ${cnt} ${tag}</div>`;
+  }
+  chips.innerHTML = chipsHtml;
+}
+
+function toggleWeekTask(dayKey, id) {
+  const [y,m,dd] = dayKey.split('-').map(Number);
+  const date = new Date(y, m, dd);
+  const tasks = getTasksForDay(date);
+  const t = tasks.find(t=>t.id===id);
+  if(t) { t.done = !t.done; saveTasksForDay(date, tasks); renderWeekGrid(); updateHeaderStats(); renderTodayTasks(); }
+}
+
+let pendingWeekDayKey = null;
+function openWeekModal(dayKey) {
+  pendingWeekDayKey = dayKey;
+  document.getElementById('modalTaskName').value = '';
+  document.getElementById('modalTime').value = '';
+  document.getElementById('modalOverlay').classList.add('open');
+  setTimeout(()=>document.getElementById('modalTaskName').focus(), 100);
+}
+function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
+function saveModalTask() {
+  const name = document.getElementById('modalTaskName').value.trim();
+  if(!name) return;
+  const tag = document.getElementById('modalCategory').value;
+  const [y,m,dd] = pendingWeekDayKey.split('-').map(Number);
+  const date = new Date(y, m, dd);
+  const tasks = getTasksForDay(date);
+  tasks.push({ id: Date.now(), text: name, tag, done: false });
+  saveTasksForDay(date, tasks);
+  closeModal();
+  renderWeekGrid();
+  const today = new Date();
+  if(date.toDateString() === today.toDateString()) { renderTodayTasks(); updateHeaderStats(); }
+}
+
+function renderDailyChecklist() {
+  const list = document.getElementById('dailyChecklist');
+  list.innerHTML = state.checklist.map(item => `
+    <div class="check-item ${item.done?'done-item':''}" onclick="toggleCheck('${item.id}')">
+      <div class="check-icon">${item.done?'✓':''}</div>
+      <span class="check-label">${item.text}</span>
+    </div>
+  `).join('');
+}
+function toggleCheck(id) {
+  const item = state.checklist.find(c=>c.id===id);
+  if(item) { item.done = !item.done; save('checklist_'+todayKey(), state.checklist); renderDailyChecklist(); }
+}
+
+function renderWeeklyGoals() {
+  const list = document.getElementById('weeklyGoalList');
+  if(!state.weeklyGoals.length) {
+    list.innerHTML = '<div class="empty-state" style="padding:16px"><div class="emoji">🎯</div>Set your weekly goals!</div>';
+    return;
+  }
+  list.innerHTML = state.weeklyGoals.map(g => `
+    <div class="task-item ${g.done?'done':''}" style="border-color:var(--peach-dark)">
+      <div class="task-cb ${g.done?'checked':''}" onclick="toggleTask('wgoal',${g.id})" style="border-color:var(--peach-dark);${g.done?'background:var(--mint-dark);border-color:var(--mint-text)':''}">${g.done?'✓':''}</div>
+      <span class="task-text">${escHtml(g.text)}</span>
+      <button class="task-delete" onclick="deleteTask('wgoal',${g.id})">✕</button>
+    </div>
+  `).join('');
+}
+function addWeeklyGoal() {
+  const input = document.getElementById('weeklyGoalInput');
+  const text = input.value.trim();
+  if(!text) return;
+  state.weeklyGoals.push({ id: Date.now(), text, done: false });
+  save('wgoals_'+weekKey(), state.weeklyGoals);
+  input.value = '';
+  renderWeeklyGoals();
+}
+
+function renderHabits() {
+  const tbody = document.getElementById('habitTableBody');
+  const wk = weekKey();
+  if(!state.habitDone) state.habitDone = {};
+
+  tbody.innerHTML = state.habits.map((h,hi) => {
+    let streak = 0;
+    const today = new Date();
+    for(let i=0;i<7;i++){
+      const d2 = new Date(today); d2.setDate(today.getDate()-i);
+      const dk = dayTaskKey(d2);
+      if(state.habitDone[h.id+'_'+dk]) streak++; else break;
+    }
+    const days = getWeekDays();
+    const dayCells = days.map(d => {
+      const dk = dayTaskKey(d);
+      const done = !!(state.habitDone[h.id+'_'+dk]);
+      return `<td><div class="habit-circle ${done?'done':''}" onclick="toggleHabit('${h.id}','${dk}')">${done?'✓':''}</div></td>`;
+    }).join('');
+    return `<tr>
+      <td>
+        <div class="habit-name-cell">
+          ${escHtml(h.name)}
+          <button onclick="deleteHabit('${h.id}')" style="background:none;border:none;cursor:pointer;color:var(--text-muted);font-size:12px;margin-left:auto;opacity:0.5" title="Remove">✕</button>
+        </div>
+      </td>
+      ${dayCells}
+      <td><span class="habit-streak">🔥 ${streak}</span></td>
+    </tr>`;
+  }).join('');
+}
+function toggleHabit(hid, dk) {
+  const key = hid+'_'+dk;
+  state.habitDone[key] = !state.habitDone[key];
+  save('habitdone_'+weekKey(), state.habitDone);
+  renderHabits();
+  updateHeaderStats();
+}
+function addHabit() {
+  const input = document.getElementById('habitInput');
+  const text = input.value.trim();
+  if(!text) return;
+  state.habits.push({ id: 'h'+Date.now(), name: text, days: {} });
+  save('habits', state.habits);
+  input.value = '';
+  renderHabits();
+}
+function deleteHabit(id) {
+  state.habits = state.habits.filter(h=>h.id!==id);
+  save('habits', state.habits);
+  renderHabits();
+}
+
+function updateHeaderStats() {
+  const today = new Date();
+  const tasks = getTasksForDay(today);
+  const done = tasks.filter(t=>t.done).length;
+  document.getElementById('todayCount').textContent = `📋 ${tasks.length} Task${tasks.length!==1?'s':''} Today`;
+  document.getElementById('doneCount').textContent = `✅ ${done} Done`;
+  // streak: consecutive days with at least 1 done task
+  let streak = 0;
+  for(let i=0;i<30;i++){
+    const d = new Date(today); d.setDate(today.getDate()-i);
+    const dt = getTasksForDay(d);
+    if(dt.some(t=>t.done)) streak++; else break;
+  }
+  document.getElementById('streakCount').textContent = `🔥 ${streak} Day Streak`;
+}
+
+function switchTab(name, el) {
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  if(el) el.classList.add('active');
+}
+
+function escHtml(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function initHeaderDate() {
+  const d = new Date();
+  const opts = { weekday:'long', year:'numeric', month:'long', day:'numeric' };
+  document.getElementById('headerDate').textContent = d.toLocaleDateString('en-IN', opts);
+  document.getElementById('quoteBar').textContent = QUOTES[d.getDay() % QUOTES.length];
+}
+
+// Close modal on overlay click
+document.getElementById('modalOverlay').addEventListener('click', function(e){ if(e.target===this) closeModal(); });
+document.getElementById('slotModalOverlay').addEventListener('click', function(e){ if(e.target===this) closeSlotModal(); });
+document.getElementById('slotModalEmoji').addEventListener('click', function(){ pickEmoji(document.getElementById('slotModalId').value); });
+
+// Init
+initHeaderDate();
+renderTodayTasks();
+renderTimeSlots();
+renderWeekGrid();
+renderDailyChecklist();
+renderWeeklyGoals();
+renderHabits();
+updateHeaderStats();
+</script>
+</body>
+</html>
